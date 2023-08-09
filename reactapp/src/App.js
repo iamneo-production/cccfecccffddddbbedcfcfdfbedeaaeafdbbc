@@ -1,95 +1,126 @@
-import { Component } from "react";
-import classes from "./App.module.css"
+
+import { useState } from 'react';
+import './App.css';
 import Button from "./components/UI/Button/Button";
 import Card from "./components/UI/Card/Card";
-import Banner from "./components/UI/Banner/Banner"
-import questions from './Data/quizQuestions';
+import React from 'react';
+function App() {
 
-class App extends Component {
+  var qCards;
+  var startBtn;
+  var resultBtn;
 
-  state = {
-    startQuiz : false,
-    questionSet : [],
-    questionsCorrect : 0,
-    questionsInTotal : 5,
-    totalTries : 0,
-    showResult : false
+  const questionData = [
+    {
+      key:1,
+      question:'Who is the father of the nation ?',
+      //correctAnswerMarkUpdate,
+      //attempt,
+      options : {
+        option1: 'Mahatma Gandhi',
+        option2: 'Jawaharlal Nehru',
+        option3: 'Donald Trump',
+        option4: 'Barrack Obama'
+      },
+      answer : 'Mahatma Gandhi'
+    },
+    {
+      key : 2,
+      question : "What color is are the leaves ?",
+      //correctAnswerMarkUpdate,
+      //attempt,
+      options : {
+        option1 : "Blue",
+        option2 : "Red",
+        option3 : "Yellow",
+        option4 : "Green",
+      },
+      answer : "Green"
+    },
+    {
+      key:3,
+      question:'Who is the father of the nation ?',
+      //correctAnswerMarkUpdate,
+      //attempt,
+      options : {
+        option1: 'Mahatma Gandhi',
+        option2: 'Jawaharlal Nehru',
+        option3: 'Donald Trump',
+        option4: 'Barrack Obama'
+      },
+      answer : 'Mahatma Gandhi'
+    },
+    {
+      key:4,
+      question:'Who is the father of the nation ?',
+      //correctAnswerMarkUpdate,
+      //attempt,
+      options : {
+        option1: 'Mahatma Gandhi',
+        option2: 'Jawaharlal Nehru',
+        option3: 'Donald Trump',
+        option4: 'Barrack Obama'
+      },
+      answer : 'Mahatma Gandhi'
+    },
+    {
+      key:5,
+      question:'Who is the father of the nation ?',
+      //correctAnswerMarkUpdate,
+      //attempt,
+      options : {
+        option1: 'Mahatma Gandhi',
+        option2: 'Jawaharlal Nehru',
+        option3: 'Donald Trump',
+        option4: 'Barrack Obama'
+      },
+      answer : 'Mahatma Gandhi'
+    },
+
+  ]
+  const [startFlag, setStartFlag] = useState(false);
+  const [resultFlag, setResultFlag] = useState(false);
+  const [buttonText, setButtonText] = useState('Start Quiz');
+  const [questionsCorrect, setQuestionsCorrect] = useState(0);
+  const [answered, setAnswered] = useState(0);
+
+  function handleStart()
+  {
+    setStartFlag(true);
+    setButtonText('Started');
   }
 
-  onEachTry = () => {
-    this.setState(prevState => (
-      {totalTries : prevState.totalTries + 1}
-    ));
-
-  }
-
-  showEndResult = () => {
-    
-    this.setState(prevState => (
+  if(startFlag)
+  {
+    qCards = 
+    <div>
       {
-        startQuiz: false,
-        showResult : true,
-        questionSet: [],
-        totalTries : 0
+        questionData.map((data) => 
+          <Card question= {data.question} options = {{
+            option1 : data.options.option1,
+            option2 : data.options.option2,
+            option3 : data.options.option3,
+            option4 : data.options.option4,
+          }} > </Card>)
       }
-    ))
+    </div> 
+
+    startBtn = <></>;
   }
-
-  onAnswerCorrect = () => {
-    if(this.state.questionsCorrect <= this.state.questionsInTotal) {
-      this.setState(prevState => {
-        return {
-          questionsCorrect : prevState.questionsCorrect + 1
-        }
-      })
-    }
+  else
+  {
+    startBtn = <Button onClick = {handleStart}>Start Quiz</Button>;
   }
-
-  onQuizToggler = () => {
-    this.setState({startQuiz : true, showResult : false, questionsCorrect : 0, totalTries: 0});
-    this.startQuiz();
-  }
-
-   startQuiz = async () => {
-    
-    let newQuestions = questions;
-    console.log("Stared");
-
-    let QuestionCards = newQuestions.map((values, ind) => (
-      <Card
-        key={values.questionId}
-        question={values.question}
-        correctAnswerMarkUpdate={this.onAnswerCorrect}
-        attempt={this.onEachTry}
-        options={{
-          option1: values.option1,
-          option2: values.option2,
-          option3: values.option3,
-          option4: values.option4
-        }}
-        answer={values.answer}
-      />
-    ))
-    this.setState({questionSet : QuestionCards, questionsInTotal: QuestionCards.length, startQuiz : true})
-  }
-
   
-
-  render() {
-
-    return (
-      <div>
-        <h1> <center>Quizz App</center> </h1>
-        {this.state.showResult &&  <Banner>You have answered <b>{this.state.questionsCorrect} / {this.state.questionsInTotal} </b> Correctly</Banner>}
-        {!this.state.startQuiz && <Button click = {this.onQuizToggler}>Start Quiz</Button>}
-        <div className={classes.Questions}>
-          {this.state.questionSet}
-        </div>
-        
-        {this.state.totalTries === this.state.questionsInTotal? <Button click = {this.showEndResult}>Show Results</Button> : null}
-      </div>
-    )
-  }
-
+  return (
+    <div className="App">
+      <h1>
+        Quizz App
+      </h1>
+      {qCards}
+      {startBtn}
+    </div>
+  );
 }
+
 export default App;
