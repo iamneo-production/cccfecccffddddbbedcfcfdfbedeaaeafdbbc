@@ -54,15 +54,6 @@ class App extends Component {
     
     let newQuestions = questions;
     console.log("Stared");
-    // await axios.get("http://localhost:8080/")
-    //     .then(async (res) => {
-
-    //       newQuestions = await res.data;
-    //       console.log(newQuestions);
-
-    //     }).catch((error) => {
-    //       console.log(error);
-    //     })
 
     let QuestionCards = newQuestions.map((values, ind) => (
       <Card
