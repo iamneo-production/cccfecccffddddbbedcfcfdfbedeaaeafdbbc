@@ -1,105 +1,130 @@
-import { Component } from "react";
-import classes from "./App.module.css"
-import Button from "./components/UI/Button/Button";
-import Card from "./components/UI/Card/Card";
-import Banner from "./components/UI/Banner/Banner"
-import axios from "axios";
-import questions from './Data/quizQuestions';
+import { useState } from 'react';
+import './App.css';
+import Banner from './components/UI/Banner/Banner';
+import Button from './components/UI/Button/Button';
+import Card from './components/UI/Card/Card';
 
-class App extends Component {
-
-  state = {
-    startQuiz : false,
-    questionSet : [],
-    questionsCorrect : 0,
-    questionsInTotal : 5,
-    totalTries : 0,
-    showResult : false
+function App() {
+  const correctObject = {
+    questionsCorrect : 0
   }
 
-  onEachTry = () => {
-    this.setState(prevState => (
-      {totalTries : prevState.totalTries + 1}
-    ));
+  const [quizStartState,setQuizStartState] = useState(false);
+  let [questionsAnswered, setQuestionsAnswered] = useState(0);
+  let [correctAnswers, setCorrectAnswers] = useState(correctObject);
+  const [showResults, setShowResults] = useState(false);
 
-  }
+  const questions = [
+    {
+      questionId : 1,
+      question : 'Who is the father of our nation?',
+      option1 : 'Mahatma Gandhi',
+      option2 : 'Jawaharlal Nehru',
+      option3 : 'Donald Trump',
+      option4 : 'Barrack Obama',
+      answer : 'Mahatma Gandhi',
+      isAnswered:false
+    },
+    {
+      questionId : 2,
+      question : 'What color is are the leaves ?',
+      option1 : 'Blue',
+      option2 : 'Red',
+      option3 : 'Yellow',
+      option4 : 'Green',
+      answer : 'Green',
+      isAnswered:false
+    },
+    {
+      questionId : 3,
+      question : 'What color is the sky ?',
+      option1 : 'Blue',
+      option2 : 'Red',
+      option3 : 'Yellow',
+      option4 : 'Green',
+      answer : 'Blue',
+      isAnswered:false
+    },
+    {
+      questionId : 4,
+      question : 'What color is the sky ?',
+      option1 : 'Blue',
+      option2 : 'Red',
+      option3 : 'Yellow',
+      option4 : 'Green',
+      answer : 'Blue',
+      isAnswered:false
+    },
+    {
+      questionId : 5,
+      question : 'What color is the fire ?',
+      option1 : 'Blue',
+      option2 : 'Red',
+      option3 : 'Yellow',
+      option4 : 'Green',
+      answer : 'Yellow',
+      isAnswered:false
+    }
+  ];
 
-  showEndResult = () => {
+  const [questionsState, setQuestionsState] = useState(questions);
+
+  const quizStartHandler = () => {
+    setQuizStartState(true);
+    setShowResults(false);
+    setQuestionsState(questions);
+    setCorrectAnswers(correctObject);
+  };
+
+  const attemptHandler = (event) => {
+    setQuestionsAnswered(++questionsAnswered);
+
+    const nextQuestionArray = [...questionsState];
+    const questionToBeChanged = nextQuestionArray.find(a => 
+      // eslint-disable-next-line
+      a.questionId == event.target.parentNode.id
+    );
     
-    this.setState(prevState => (
-      {
-        startQuiz: false,
-        showResult : true,
-        questionSet: [],
-        totalTries : 0
-      }
-    ))
-  }
+    questionToBeChanged.isAnswered=true;
+    setQuestionsState(nextQuestionArray);
 
-  onAnswerCorrect = () => {
-    if(this.state.questionsCorrect <= this.state.questionsInTotal) {
-      this.setState(prevState => {
-        return {
-          questionsCorrect : prevState.questionsCorrect + 1
-        }
-      })
+    if(questionToBeChanged.answer === event.target.value) {
+      setCorrectAnswers({
+        questionsCorrect:++correctAnswers.questionsCorrect
+      });
     }
   }
 
-  onQuizToggler = () => {
-    this.setState({startQuiz : true, showResult : false, questionsCorrect : 0, totalTries: 0});
-    this.startQuiz();
-  }
+  const resultsShowHandler = () => {
+    setShowResults(true);
+    setQuizStartState(false);
+    setQuestionsAnswered(correctObject);
+  };
 
-   startQuiz = async () => {
-    
-    let newQuestions = questions;
-    console.log("Stared");
-    // await axios.get("http://localhost:8080/")
-    //     .then(async (res) => {
+  const questionsCards = questionsState.map((question) => {
+    return <Card key={question.questionId}
+    id={question.questionId}
+    question={question.question}
+    attempt={attemptHandler}
+    options={{
+    option1: question.option1,
+    option2: question.option2,
+    option3: question.option3,
+    option4: question.option4
+    }}
+    isDisabled={question.isAnswered}
+    />;
+  }); 
 
-    //       newQuestions = await res.data;
-    //       console.log(newQuestions);
-
-    //     }).catch((error) => {
-    //       console.log(error);
-    //     })
-
-    let QuestionCards = newQuestions.map((values, ind) => (
-      <Card
-        key={values.questionId}
-        question={values.question}
-        correctAnswerMarkUpdate={this.onAnswerCorrect}
-        attempt={this.onEachTry}
-        options={{
-          option1: values.option1,
-          option2: values.option2,
-          option3: values.option3,
-          option4: values.option4
-        }}
-        answer={values.answer}
-      />
-    ))
-    this.setState({questionSet : QuestionCards, questionsInTotal: QuestionCards.length, startQuiz : true})
-  }
-
-  
-
-  render() {
-
-    return (
-      <div>
-        <h1> <center>Quizz App</center> </h1>
-        {this.state.showResult &&  <Banner>You have answered <b>{this.state.questionsCorrect} / {this.state.questionsInTotal} </b> Correctly</Banner>}
-        {!this.state.startQuiz && <Button click = {this.onQuizToggler}>Start Quiz</Button>}
-        <div className={classes.Questions}>
-          {this.state.questionSet}
-        </div>
-        
-        {this.state.totalTries === this.state.questionsInTotal? <Button click = {this.showEndResult}>Show Results</Button> : null}
-      </div>
-    )
-  }
-
+  return (
+    <div className="App">
+      <h1>Quizz App</h1>
+      {(showResults) ? <Banner correct={correctAnswers.questionsCorrect}/>:''}
+      {(!quizStartState) ? <Button handler={quizStartHandler}>Start Quiz</Button>:''}
+      {(quizStartState) ? <div>{questionsCards}</div> : ''}
+      {(questionsAnswered === 5) ? <Button handler={resultsShowHandler}>Show Results</Button>:''}
+    </div>
+  );
 }
+
 export default App;

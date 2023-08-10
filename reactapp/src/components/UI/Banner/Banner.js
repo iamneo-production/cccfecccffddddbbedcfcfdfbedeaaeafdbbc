@@ -1,10 +1,5 @@
-import React from "react";
-import classes from "./Banner.module.css"
-const Banner = props => {
-
-    return (
-        <h2 className={classes.Banner} >{props.children}</h2>
-    )
-}
+const Banner = (props) => {
+    return <div>You have answered {props.correct} / 5  Correctly</div>;
+};
 
 export default Banner;

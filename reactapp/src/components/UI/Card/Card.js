@@ -1,50 +1,15 @@
-import React, { useEffect, useState } from "react";
+import './Card.css';
 import Button from "../Button/Button";
-import classes from "./Card.module.css";
 
-const Card = props => {
-    let [state, setState] = useState({
-        options : props.options,
-        answer : props.answer,
-        isOptionTrue : null
-    });
-
-    const logg = () => console.log(state);
-
-    const checkAnswer = (event) => {
-        props.attempt();
-        if(event.target.innerHTML === state.answer) {
-            setState( prevState => {
-                return {
-                    ...prevState,
-                    isOptionTrue : true
-                }
-            });
-            props.correctAnswerMarkUpdate();
-        }
+const Card = (props) => {
+    return <div className="card" id={props.id}>
+        <h4>{props.question}</h4>
         
-        setState(prevState => {
-            return {
-                ...prevState,
-                isUpdatedOnce : true
-            }
-        })
-    }
-
-    const options = Object.keys(props.options).map((optionIndex, ind) => {
-        return (
-            <Button disabled={state.isUpdatedOnce} click={checkAnswer} key={ind} >{props.options[optionIndex]}</Button>
-        )
-    });
-
-    return (
-        <div className={classes.Card}>
-            <h4>{props.question}</h4>
-            <div className={classes.CardOption}>
-                {options}
-            </div>
-        </div>
-    )
-}
+        <Button handler={props.attempt} disabledState={props.isDisabled} value={props.options.option1}>{props.options.option1}</Button>
+        <Button handler={props.attempt} disabledState={props.isDisabled} value={props.options.option2}>{props.options.option2}</Button>
+        <Button handler={props.attempt} disabledState={props.isDisabled} value={props.options.option3}>{props.options.option3}</Button>
+        <Button handler={props.attempt} disabledState={props.isDisabled} value={props.options.option4}>{props.options.option4}</Button>
+    </div>;
+};
 
 export default Card;
